@@ -66,8 +66,8 @@ class Video:
             frac_frames = 1
 
         def quick_export(core, start, end):
-            video = cv2.VideoWriter(os.path.join(export_dir, f"video{core}.mp4"), cv2.VideoWriter_fourcc(
-                *"MPEG"), self.fps, self.resolution)
+            video = cv2.VideoWriter(os.path.join(export_dir, f"video{core}.mov"), cv2.VideoWriter_fourcc(
+                *"MP4"), self.fps, self.resolution)
             for frame in range(start, end+1):
                 with open(os.path.join(export_dir, f"frame{frame}"), "w"):
                     pass
@@ -104,8 +104,8 @@ class Video:
         export_dir = os.path.join(pardir, "export")
         os.makedirs(export_dir, exist_ok=True)
         try:
-            video = cv2.VideoWriter(os.path.join(export_dir, "video.mp4"), cv2.VideoWriter_fourcc(
-                *"MPEG"), self.fps, self.resolution)
+            video = cv2.VideoWriter(os.path.join(export_dir, "video.mov"), cv2.VideoWriter_fourcc(
+                *"MP4"), self.fps, self.resolution)
             if num_cores > 1:
                 if num_cores >= multiprocessing.cpu_count():
                     print("High chance of computer freezing")
@@ -149,7 +149,7 @@ class Video:
                     process.join()
 
                 videos = [os.path.join(
-                    export_dir, f"video{c}.mp4") for c in range(num_cores)]
+                    export_dir, f"video{c}.mov") for c in range(num_cores)]
                 with tqdm(total=frames+self.start_offset+self.end_offset+num_cores, unit="frames", desc="Concatenating") as t:
                     for v in videos:
                         curr_v = cv2.VideoCapture(v)
@@ -208,7 +208,7 @@ class Video:
                     print("Music offsetted successfully")
 
                 print("Compiling video")
-                video = ffmpeg.input(os.path.join(export_dir, "video.mp4")).video
+                video = ffmpeg.input(os.path.join(export_dir, "video.mov")).video
                 audio = ffmpeg.input(music_file).audio
                 video = ffmpeg.output(
                     video, audio, path, vcodec="copy", acodec="aac", strict="experimental")
@@ -217,7 +217,7 @@ class Video:
                 ffmpeg.run(video)
             else:
                 print("Skipping music...")
-                os.rename(os.path.join(export_dir, "video.mp4"), path)
+                os.rename(os.path.join(export_dir, "video.mov"), path)
 
             print(f"Video Done")
             print("Cleaning up...")
